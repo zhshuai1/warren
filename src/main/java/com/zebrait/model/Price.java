@@ -1,11 +1,20 @@
 package com.zebrait.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+
+import javax.persistence.*;
 
 @Getter
 @Setter
+@Entity
+@Table(name = "price")
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Price {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
     private String code;
     private float open;
     private float close;
@@ -14,6 +23,7 @@ public class Price {
     private float delta;
     private long volume;
     private float turnover;
+    @Enumerated(EnumType.STRING)
     private Type type;
 
     public enum Type {
