@@ -9,12 +9,12 @@ import java.io.InputStreamReader;
 import java.net.URL;
 
 @Log4j2
-public class Crawler {
-    public String getContent(String url) {
+public final class Crawler {
+    public static String getContent(String url) {
         return getContent(url, null);
     }
 
-    public String getContent(String urlStr, String pattern) {
+    public static String getContent(String urlStr, String pattern) {
         URL url = null;
         StringBuilder stringBuilder = new StringBuilder();
         try {
