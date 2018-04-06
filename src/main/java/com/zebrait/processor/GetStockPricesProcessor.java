@@ -6,7 +6,7 @@ import com.zebrait.model.Price;
 import java.util.List;
 
 public class GetStockPricesProcessor {
-    public List<Price> getPrices(String code, Price.Type type) {
+    public List<Price> getPrices(String code) {
         String content = Crawler.getContent("");
         return null;
     }

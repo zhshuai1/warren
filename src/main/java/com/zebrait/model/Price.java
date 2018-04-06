@@ -23,10 +23,4 @@ public class Price {
     private float delta;
     private long volume;
     private float turnover;
-    @Enumerated(EnumType.STRING)
-    private Type type;
-
-    public enum Type {
-        SH, SZ, HYBK, GNBK, DQBK, ZS;
-    }
 }
