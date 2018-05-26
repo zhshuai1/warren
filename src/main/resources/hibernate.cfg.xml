@@ -11,6 +11,7 @@
         <property name="hibernate.connection.url">jdbc:mysql://g.sep.com:3306/stock2</property>
         <property name="show_sql">true</property>
         <property name="format_sql">true</property>
+        <property name="connection.pool_size">100</property>
 
         <!-- hbm2ddl.auto: 生成表结构的策略配置
              update(最常用的取值): 如果当前数据库中不存在表结构,那么自动创建表结构.
@@ -20,14 +21,18 @@
              create-drop(极少): 无论是否存在表结构.每次启动Hibernate都会重新创建表结构.每次Hibernate运行结束时,删除表结构.
              validate(很少):不会自动创建表结构.也不会自动维护表结构.Hibernate只校验表结构. 如果表结构不一致将会抛出异常.
           -->
-        <property name="hbm2ddl.auto">validate</property>
+        <property name="hbm2ddl.auto">update</property>
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
         <property name="hibernate.connection.autocommit">true</property>
 
 
         <!-- 将Session与线程绑定=> 只有配置了该配置,才能使用getCurrentSession -->
         <property name="hibernate.current_session_context_class">thread</property>
+        <!--
         <mapping class="com.zebrait.model.Price"/>
-        <mapping class="com.zebrait.model.Stock"/>
+        <mapping class="com.zebrait.model.StockGroupMapping"/>
+        -->
+        <mapping class="com.zebrait.model.StockStatusEntry"/>
+
     </session-factory>
 </hibernate-configuration>

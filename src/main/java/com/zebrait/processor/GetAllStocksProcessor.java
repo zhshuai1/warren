@@ -3,7 +3,7 @@ package com.zebrait.processor;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.zebrait.crawler.Crawler;
-import com.zebrait.model.Stock;
+import com.zebrait.model.StockGroupMapping;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 public class GetAllStocksProcessor {
     private static String allStockUrl = "http://quote.eastmoney.com/stocklist.html";
+    private static String indexesUrl="http://quote.eastmoney.com/centerv2/hszs";
     private static String industryGroupUrl = "http://nufm.dfcfw.com/EM_Finance2014NumericApplication/JS" +
             ".aspx?type=CT&cmd=C._BKHY&sty=FPGBKI&page=1&pageSize=50&token=7bc05d0d4c3c22ef9fca8c2a912d779c";
     private static String conceptGroupUrl = "http://nufm.dfcfw.com/EM_Finance2014NumericApplication/JS" +
@@ -24,46 +25,49 @@ public class GetAllStocksProcessor {
     private static String areaGroupUrlTemplate = null;
     private static String PATTERN = ".*http://quote\\.eastmoney\\.com/(\\w+)\\.html.*";
 
-    public List<Stock> getAllStocks() {
+    public List<StockGroupMapping> getAllStocks() {
         return getStocksWithUrl(allStockUrl);
     }
+    public List<StockGroupMapping> getAllIndexes(){
+        return getStocksWithUrl(indexesUrl);
+    }
 
-    public List<Stock> getAllIndustryGroups() {
+    public List<StockGroupMapping> getAllIndustryGroups() {
         String content = Crawler.getContent(industryGroupUrl).trim();
         String realContent = content.substring(1, content.length() - 1);
         List<String> groups = new Gson().fromJson(realContent, new TypeToken<ArrayList<String>>() {
         }.getType());
-        return groups.stream().map(s -> Stock.builder().code(s.split(",")[1]).build())
+        return groups.stream().map(s -> StockGroupMapping.builder().code(s.split(",")[1]).build())
                 .collect(Collectors.toList());
 
     }
 
-    public List<Stock> getAllConceptGroups() {
+    public List<StockGroupMapping> getAllConceptGroups() {
         String content = Crawler.getContent(conceptGroupUrl).trim();
         String realContent = content.substring(1, content.length() - 1);
         List<String> groups = new Gson().fromJson(realContent, new TypeToken<ArrayList<String>>() {
         }.getType());
-        return groups.stream().map(s -> Stock.builder().code(s.split(",")[1]).build())
+        return groups.stream().map(s -> StockGroupMapping.builder().code(s.split(",")[1]).build())
                 .collect(Collectors.toList());
     }
 
-    public List<Stock> getAllAreaGroups() {
+    public List<StockGroupMapping> getAllAreaGroups() {
         throw new UnsupportedOperationException();
     }
 
-    public List<Stock> getStocksInIndustryGroup(String code) {
+    public List<StockGroupMapping> getStocksInIndustryGroup(String code) {
         return getStocksWithUrl(industryGroupUrl);
     }
 
-    public List<Stock> getStocksInConceptGroup(String code) {
+    public List<StockGroupMapping> getStocksInConceptGroup(String code) {
         return getStocksWithUrl(conceptGroupUrl);
     }
 
-    public List<Stock> getStocksInAreaGroup(String code) {
+    public List<StockGroupMapping> getStocksInAreaGroup(String code) {
         throw new UnsupportedOperationException();
     }
 
-    private List<Stock> getStocksWithUrl(String url) {
+    private List<StockGroupMapping> getStocksWithUrl(String url) {
         String content = Crawler.getContent(allStockUrl, PATTERN);
         String[] entries = content.split("\\n");
         Pattern patten = Pattern.compile(PATTERN);
@@ -74,6 +78,6 @@ public class GetAllStocksProcessor {
             else {
                 return null;
             }
-        }).distinct().map(n -> Stock.builder().code(n).build()).collect(Collectors.toList());
+        }).distinct().map(n -> StockGroupMapping.builder().code(n).build()).collect(Collectors.toList());
     }
 }

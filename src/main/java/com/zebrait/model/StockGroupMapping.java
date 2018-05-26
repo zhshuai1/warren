@@ -2,23 +2,26 @@ package com.zebrait.model;
 
 import lombok.*;
 
-import java.util.Date;
+import javax.persistence.*;
 import java.util.List;
-import java.util.Map;
 
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Stock {
+@Builder
+
+//@Entity
+//@Table(name = "stock")
+public class StockGroupMapping {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String code;
     private String name;
     private String industryGroup;
     private String areaGroup;
     private List<String> conceptGroups;
+    @Enumerated(EnumType.STRING)
     private Type type;
-    private List<Price> histories;
-    private Map<Date, Double> todayPrices;
 }
