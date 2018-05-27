@@ -14,7 +14,7 @@ public class NewStockStrategy implements Strategy {
 
         List<Price> histories = stock.getHistories();
         log.info("The size of stock {} is {}", stock.getCode(), histories.size());
-        if (histories.size() > 100) {
+        if (histories.size() < 1 || histories.size() > 100) {
             return false;
         }
         return true;

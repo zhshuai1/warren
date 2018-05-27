@@ -6,7 +6,7 @@ import com.zebrait.hibernate.SessionFactoryProvider;
 import com.zebrait.hibernate.StockStatusEntryRepository;
 import com.zebrait.model.StockStatus;
 import com.zebrait.model.StockStatusEntry;
-import com.zebrait.strategy.ContinuouGrowingStrategy;
+import com.zebrait.strategy.ContinuousGrowingStrategy_25_10_40;
 import com.zebrait.strategy.NewStockStrategy;
 import com.zebrait.strategy.Strategy;
 
@@ -19,7 +19,7 @@ import java.util.concurrent.Executors;
 //Get the candidate stocks stored in db, and check whether should buy or sell.
 public class BuyAndSellProcessor {
     private static DataProvider dataProvider = new EastMoneyDataProvider();
-    private static List<Strategy> strategies = Arrays.asList(new NewStockStrategy(),new ContinuouGrowingStrategy());
+    private static List<Strategy> strategies = Arrays.asList(new NewStockStrategy(), new ContinuousGrowingStrategy_25_10_40());
     private static StockStatusEntryRepository stockStatusEntryRepository = new StockStatusEntryRepository();
 
     public static void main(String[] args) {
@@ -34,7 +34,7 @@ public class BuyAndSellProcessor {
                         stockStatusEntry.setStockStatus(StockStatus.BOUGHT);
                         stockStatusEntry.setLastUpdate(new Date());
                         stockStatusEntry.setPrice(0);
-                        stockStatusEntryRepository.save(stockStatusEntry);
+                        stockStatusEntryRepository.saveOrUpdate(stockStatusEntry);
                     }
                 }
             });

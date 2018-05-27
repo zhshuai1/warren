@@ -73,13 +73,13 @@ public class EastMoneyDataProvider implements DataProvider {
 class EastMoneyStockHistoryProvider {
     private static String shUrl = "http://pdfm.eastmoney" +
             ".com/EM_UBG_PDTI_Fast/api/js?rtntype=5&token=4f1862fc3b5e77c150a2b985b12db0fd&id=#####1&type=k" +
-            "&authorityType=ba";
+            "&authorityType=fa";
     private static String szUrl = "http://pdfm.eastmoney" +
             ".com/EM_UBG_PDTI_Fast/api/js?rtntype=5&token=4f1862fc3b5e77c150a2b985b12db0fd&id=#####2&type=k" +
-            "&authorityType=ba";
+            "&authorityType=fa";
     private static String groupUrl = "http://pdfm.eastmoney" +
             ".com/EM_UBG_PDTI_Fast/api/js?rtntype=5&token=4f1862fc3b5e77c150a2b985b12db0fd&id=#####&type=k" +
-            "&authorityType=ba";
+            "&authorityType=fa";
     private static Map<Type, String> mapping = new HashMap<>();
 
     static {
@@ -108,9 +108,9 @@ class EastMoneyStockHistoryProvider {
 
         for (int i = begin; i < data.size(); ++i) {
             String[] fields = data.get(i).split(",");
-            float open = Float.parseFloat(fields[1]);
-            float close = Float.parseFloat(fields[2]);
-            float yc = open;
+            double open = Float.parseFloat(fields[1]);
+            double close = Float.parseFloat(fields[2]);
+            double yc = open;
             if (prices.size() > 0) {
                 yc = prices.get(prices.size() - 1).getClose();
             }
@@ -126,7 +126,6 @@ class EastMoneyStockHistoryProvider {
                     .build());
         }
         if (data.size() > 0) {
-            log.info("This is not a new stock {}, the data for the first element is not right, will remove it.", code);
             prices.remove(0);
         }
         return prices;

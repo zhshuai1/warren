@@ -18,14 +18,14 @@ public class Price {
     private long id;
     private String name;
     private String code;
-    private float open;
-    private float close;
-    private float high;
-    private float low;
-    private float delta;
+    private double open;
+    private double close;
+    private double high;
+    private double low;
+    private double delta;
     private long amount;
     private long volume;
-    private float turnover;
+    private double turnover;
     private Date day;
     @Enumerated(EnumType.STRING)
     private Type type;

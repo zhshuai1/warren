@@ -8,9 +8,7 @@ import com.zebrait.hibernate.StockStatusEntryRepository;
 import com.zebrait.model.Stock;
 import com.zebrait.model.StockStatus;
 import com.zebrait.model.StockStatusEntry;
-import com.zebrait.strategy.ContinuouGrowingStrategy;
-import com.zebrait.strategy.NewStockStrategy;
-import com.zebrait.strategy.Strategy;
+import com.zebrait.strategy.*;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -27,7 +25,8 @@ import java.util.function.Consumer;
 // this filter, the number of candidate will be much smaller.
 public class CandidateProcessor {
     private static final DataProvider dataProvider = new EastMoneyDataProvider();
-    private static final List<Strategy> strategies = Arrays.asList(new NewStockStrategy(), new ContinuouGrowingStrategy());
+    private static final List<Strategy> strategies = Arrays.asList(new NewStockStrategy(), new
+            ContinuousGrowingStrategy_25_10_40(), new ContinuousGrowingStrategy_30_10_40(), new ContinuousGrowingStrategy_40_10_40());
     private static final StockStatusEntryRepository stockStatusEntryRepository = new StockStatusEntryRepository();
     private static final Gson GSON = new Gson();
 
@@ -37,7 +36,7 @@ public class CandidateProcessor {
         final ExecutorService executorService = Executors.newFixedThreadPool(50);
 
         List<String> stockCodes = dataProvider.getAllStockCodes();
-        //List<String> stockCodes = Arrays.asList("sh600349");
+        //List<String> stockCodes = Arrays.asList("sz300601");
         Map<String, Integer> failed = new HashMap<>();
         Queue<Pair<String, Future>> resultFutures = new LinkedList<>();
         for (String code : stockCodes) {
@@ -69,39 +68,48 @@ public class CandidateProcessor {
     }
 
     private static Consumer<String> consumer = code -> {
+        String pureCode = code.substring(2);
+        if (pureCode.startsWith("5") || pureCode.startsWith("1") || pureCode.startsWith("2")) {
+            log.info("{} should be a fund, not a stock, will skip...", code);
+            return;
+        }
         Stock stock = dataProvider.getStockInfo(code);
         for (Strategy strategy : strategies) {
-            log.info("Checking stock {} for strategy {}", code, strategy.getClass().getName());
-            List<StockStatusEntry> stockStatusEntries = stockStatusEntryRepository.getStocksByCodeAndStrategy
-                    (stock.getCode(), strategy.getClass());
-            if (stockStatusEntries.size() > 1) {
-                log.warn("StockStatusEntries size is larger than 1: {}", GSON.toJson(stockStatusEntries));
-            }
-            if (stockStatusEntries.size() >= 1) {
-                if (StockStatus.BOUGHT.equals(stockStatusEntries.get(0).getStockStatus())) {
-                    log.info("You have bought this stock {}, will not check it.", code);
-                    continue;
+            try {
+                log.info("Checking stock {} for strategy {}", code, strategy.getClass().getName());
+                List<StockStatusEntry> stockStatusEntries = stockStatusEntryRepository.getStocksByCodeAndStrategy
+                        (stock.getCode(), strategy.getClass());
+                if (stockStatusEntries.size() > 1) {
+                    log.warn("StockStatusEntries size is larger than 1: {}", GSON.toJson(stockStatusEntries));
                 }
-            }
-            if (strategy.checkCandidate(stock)) {
-                StockStatusEntry stockStatusEntry;
-                if (stockStatusEntries.isEmpty()) {
-                    stockStatusEntry = StockStatusEntry.builder().stockStatus(StockStatus
-                            .CANDIDATE).code(stock.getCode()).name(stock.getName()).lastUpdate(new Date())
-                            .price(0).strategy(strategy.getClass().getName()).build();
-                    log.info("The stock {} did not in our sight recently.", code);
+                if (stockStatusEntries.size() >= 1) {
+                    if (StockStatus.BOUGHT.equals(stockStatusEntries.get(0).getStockStatus())) {
+                        log.info("You have bought this stock {}, will not check it.", code);
+                        continue;
+                    }
+                }
+                if (strategy.checkCandidate(stock)) {
+                    StockStatusEntry stockStatusEntry;
+                    if (stockStatusEntries.isEmpty()) {
+                        stockStatusEntry = StockStatusEntry.builder().stockStatus(StockStatus
+                                .CANDIDATE).code(stock.getCode()).name(stock.getName()).lastUpdate(new Date())
+                                .price(0).strategy(strategy.getClass().getName()).build();
+                        log.info("The stock {} did not in our sight recently.", code);
+                    } else {
+                        stockStatusEntry = stockStatusEntries.get(0);
+                        stockStatusEntry.setLastUpdate(new Date());
+                        stockStatusEntry.setPrice(0);
+                        log.info("The stock {} has already been a candidate, and will update it.", code);
+                    }
+                    stockStatusEntryRepository.saveOrUpdate(stockStatusEntry);
                 } else {
-                    stockStatusEntry = stockStatusEntries.get(0);
-                    stockStatusEntry.setLastUpdate(new Date());
-                    stockStatusEntry.setPrice(0);
-                    log.info("The stock {} has already been a candidate, and will update it.", code);
+                    log.info("The stock {} is not a candidate", code);
+                    if (!stockStatusEntries.isEmpty()) {
+                        stockStatusEntryRepository.freeStock(stockStatusEntries.get(0));
+                    }
                 }
-                stockStatusEntryRepository.save(stockStatusEntry);
-            } else {
-                log.info("The stock {} is not a candidate", code);
-                if (!stockStatusEntries.isEmpty()) {
-                    stockStatusEntryRepository.freeStock(stockStatusEntries.get(0));
-                }
+            } catch (Exception e) {
+                log.error("Error occurred when handling code:strategy {}:{}", code, strategy, e);
             }
         }
     };

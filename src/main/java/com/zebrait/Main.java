@@ -26,7 +26,7 @@ public class Main {
         StockStatusEntry stockStatusEntry = StockStatusEntry.builder().code("sh600031").name("不知火舞").stockStatus
                 (StockStatus.FREE).strategy(NewStockStrategy.class.getName())
                 .build();
-        stockStatusEntryRepository.save(stockStatusEntry);
+        stockStatusEntryRepository.saveOrUpdate(stockStatusEntry);
         List<StockStatusEntry> entries = stockStatusEntryRepository.getStocksByStockStatusAndStrategy(StockStatus.FREE,
                 NewStockStrategy.class);
         stockStatusEntryRepository.freeStock(stockStatusEntry);

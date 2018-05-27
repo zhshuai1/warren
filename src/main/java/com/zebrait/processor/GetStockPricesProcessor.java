@@ -46,9 +46,9 @@ public class GetStockPricesProcessor {
 
         for (int i = begin; i < data.size(); ++i) {
             String[] fields = data.get(i).split(",");
-            float open = Float.parseFloat(fields[1]);
-            float close = Float.parseFloat(fields[2]);
-            float yc = open;
+            double open = Float.parseFloat(fields[1]);
+            double close = Float.parseFloat(fields[2]);
+            double yc = open;
             if (prices.size() > 0) {
                 yc = prices.get(prices.size() - 1).getClose();
             }

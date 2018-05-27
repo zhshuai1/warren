@@ -17,10 +17,10 @@ public class StockStatusEntryRepository {
         return sessionFactory.getCurrentSession().get(StockStatusEntry.class, code);
     }
 
-    public void save(StockStatusEntry stockStatusEntry) {
+    public void saveOrUpdate(StockStatusEntry stockStatusEntry) {
         Session session = sessionFactory.getCurrentSession();
         Transaction transaction = session.beginTransaction();
-        session.save(stockStatusEntry);
+        session.saveOrUpdate(stockStatusEntry);
         transaction.commit();
     }
 
