@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public class DatabaseDataProvider implements DataProvider {
+public class DatabaseDataProvider extends DataProviderWithHistory {
     @Override
     public List<String> getAllStockCodes() {
         return null;

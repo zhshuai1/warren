@@ -17,7 +17,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class EastMoneyDataProvider implements DataProvider {
+public class EastMoneyDataProvider extends DataProviderWithHistory {
     private static String allStockUrl = "http://quote.eastmoney.com/stocklist.html";
     private static String indexesUrl = "http://quote.eastmoney.com/centerv2/hszs";
     private static String industryGroupUrl = "http://nufm.dfcfw.com/EM_Finance2014NumericApplication/JS" +

@@ -33,6 +33,8 @@
         <mapping class="com.zebrait.model.StockGroupMapping"/>
         -->
         <mapping class="com.zebrait.model.StockStatusEntry"/>
-
+        <!--
+        <mapping class="com.zebrait.model.StockTradingEntry"/>
+-->
     </session-factory>
 </hibernate-configuration>
