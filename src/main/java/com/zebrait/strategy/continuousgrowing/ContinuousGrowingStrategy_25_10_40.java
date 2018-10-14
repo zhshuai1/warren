@@ -1,4 +1,4 @@
-package com.zebrait.strategy;
+package com.zebrait.strategy.continuousgrowing;
 
 public class ContinuousGrowingStrategy_25_10_40 extends ContinuousGrowingStrategy {
 

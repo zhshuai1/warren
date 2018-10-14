@@ -6,7 +6,7 @@ import com.zebrait.hibernate.SessionFactoryProvider;
 import com.zebrait.hibernate.StockStatusEntryRepository;
 import com.zebrait.model.StockStatus;
 import com.zebrait.model.StockStatusEntry;
-import com.zebrait.strategy.ContinuousGrowingStrategy_25_10_40;
+import com.zebrait.strategy.continuousgrowing.ContinuousGrowingStrategy_25_10_40;
 import com.zebrait.strategy.NewStockStrategy;
 import com.zebrait.strategy.Strategy;
 

@@ -1,7 +1,8 @@
-package com.zebrait.strategy;
+package com.zebrait.strategy.continuousgrowing;
 
 import com.zebrait.model.Price;
 import com.zebrait.model.Stock;
+import com.zebrait.strategy.Strategy;
 import com.zebrait.util.TimeSeriesUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

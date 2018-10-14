@@ -2,17 +2,16 @@ package com.zebrait.processor;
 
 import com.google.gson.Gson;
 import com.zebrait.config.Configuration;
-import com.zebrait.dataprovider.DataProvider;
+import com.zebrait.dataprovider.DataProviderWithHistory;
 import com.zebrait.dataprovider.EastMoneyDataProvider;
 import com.zebrait.hibernate.SessionFactoryProvider;
 import com.zebrait.hibernate.StockStatusEntryRepository;
 import com.zebrait.model.Stock;
 import com.zebrait.model.StockStatus;
 import com.zebrait.model.StockStatusEntry;
-import com.zebrait.strategy.*;
+import com.zebrait.strategy.Strategy;
 import lombok.extern.log4j.Log4j2;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -21,7 +20,7 @@ import java.util.List;
 // This could be done when buy and sell. But considering the performance,  I separate this as a single task. With
 // this filter, the number of candidate will be much smaller.
 public class CandidateProcessor extends AbstractProcessor {
-    private static final DataProvider dataProvider = new EastMoneyDataProvider();
+    private static final DataProviderWithHistory dataProvider = new EastMoneyDataProvider();
     private static final List<Strategy> strategies = Configuration.STRATEGIES;
     private static final StockStatusEntryRepository stockStatusEntryRepository = new StockStatusEntryRepository();
     private static final Gson GSON = new Gson();
@@ -51,7 +50,8 @@ public class CandidateProcessor extends AbstractProcessor {
             log.info("{} should be a fund, not a stock, will skip...", code);
             return;
         }
-        Stock stock = dataProvider.getStockInfo(code);
+        Date date = new Date(new Date().getTime());
+        Stock stock = dataProvider.getStockInfo(code, date);
         for (Strategy strategy : strategies) {
             try {
                 log.info("Checking stock {} for strategy {}", code, strategy.getClass().getName());
@@ -70,7 +70,7 @@ public class CandidateProcessor extends AbstractProcessor {
                     StockStatusEntry stockStatusEntry;
                     if (stockStatusEntries.isEmpty()) {
                         stockStatusEntry = StockStatusEntry.builder().stockStatus(StockStatus
-                                .CANDIDATE).code(stock.getCode()).name(stock.getName()).lastUpdate(new Date())
+                                .CANDIDATE).code(stock.getCode()).name(stock.getName()).lastUpdate(date)
                                 .price(0).strategy(strategy.getClass().getName()).build();
                         log.info("The stock {} did not in our sight recently.", code);
                     } else {
