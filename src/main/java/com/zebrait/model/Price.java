@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -26,7 +27,16 @@ public class Price {
     private long amount;
     private long volume;
     private double turnover;
+    private List<MinuteData> todayPrices;
     private Date day;
     @Enumerated(EnumType.STRING)
     private Type type;
+
+    @Builder
+    @Getter
+    public static class MinuteData {
+        private final double price;
+        private final double avgPrice;
+        private final double volume;
+    }
 }

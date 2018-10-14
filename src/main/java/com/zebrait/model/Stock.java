@@ -2,9 +2,7 @@ package com.zebrait.model;
 
 import lombok.*;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @Getter
 @Setter
@@ -20,5 +18,6 @@ public class Stock {
     private List<String> conceptGroups;
     private Type type;
     private List<Price> histories;
-    private Map<Date, Double> todayPrices;
+    // 1 minute prices
+    private List<Price.MinuteData> todayPrices;
 }
