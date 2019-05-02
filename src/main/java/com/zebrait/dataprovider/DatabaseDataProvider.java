@@ -19,7 +19,7 @@ public class DatabaseDataProvider extends DataProviderWithHistory {
     }
 
     @Override
-    public Map<Date, Double> getTodayPrices(String code) {
+    public List<Price.MinuteData> getTodayPrices(String code) {
         return null;
     }
 

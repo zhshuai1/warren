@@ -13,13 +13,13 @@ public abstract class DataProviderWithHistory implements DataProvider {
         return getHistories(code, count).stream().filter(price -> price.getDay().before(day)).collect(Collectors.toList());
     }
 
-    public Map<Date, Double> getTodayPrices(String code, Date day) {
+    public List<Price.MinuteData> getTodayPrices(String code, Date day) {
         return null;
     }
 
     public Stock getStockInfo(String code, Date day) {
         List<Price> histories = getHistories(code, 10000, day);
-        Map<Date, Double> todayPrices = getTodayPrices(code, day);
+        List<Price.MinuteData> todayPrices = getTodayPrices(code, day);
         return Stock.builder().code(code).histories(histories).todayPrices(todayPrices).build();
     }
 }

@@ -43,14 +43,14 @@ public class EastMoneyDataProvider extends DataProviderWithHistory {
     }
 
     @Override
-    public Map<Date, Double> getTodayPrices(String code) {
+    public List<Price.MinuteData> getTodayPrices(String code) {
         return null;
     }
 
     @Override
     public Stock getStockInfo(String code) {
         List<Price> histories = getHistories(code, 10000);
-        Map<Date, Double> todayPrices = getTodayPrices(code);
+        List<Price.MinuteData>todayPrices = getTodayPrices(code);
         return Stock.builder().code(code).histories(histories).todayPrices(todayPrices).build();
     }
 

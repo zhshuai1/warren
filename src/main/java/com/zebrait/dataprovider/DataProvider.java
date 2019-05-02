@@ -14,7 +14,7 @@ public interface DataProvider {
     List<Price> getHistories(String code, int count);
 
     // Today prices for each minute
-    Map<Date, Double> getTodayPrices(String code);
+    List<Price.MinuteData> getTodayPrices(String code);
 
     // Stock metadata
     Stock getStockInfo(String code);
