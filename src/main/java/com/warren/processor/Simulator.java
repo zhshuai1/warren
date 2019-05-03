@@ -120,6 +120,7 @@ public class Simulator {
                     .code(todayInfo.getCode())
                     .date(tradingResult.getTime())
                     .price(tradingResult.getPrice())
+                    .boughtPrice(tradingEntries.get(0).getPrice())
                     .strategy(strategy.getClass().getName())
                     .tradingType(TradingType.SELL)
                     .build();

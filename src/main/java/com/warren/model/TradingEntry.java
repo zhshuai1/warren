@@ -1,7 +1,6 @@
 package com.warren.model;
 
 
-import com.warren.strategy.Strategy;
 import lombok.*;
 
 import javax.persistence.*;
@@ -21,6 +20,8 @@ public class TradingEntry {
     private String code;
     private Date date;
     private double price;
+    // only valid when SELL
+    private double boughtPrice;
     private long quantity;
     @Enumerated(EnumType.STRING)
     private TradingType tradingType;

@@ -36,4 +36,13 @@ public class StockDayInfoRepository {
         return stockDayInfos;
     }
 
+    public List<String>getAllCodes(){
+        Session session = sessionFactory.getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+        Query<String> query = session.createQuery("select distinct code from StockDayInfo", String.class);
+        List<String> codes = query.list();
+        transaction.commit();
+        return codes;
+    }
+
 }
