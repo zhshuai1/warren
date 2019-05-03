@@ -8,6 +8,7 @@ import com.warren.model.repository.StockDayInfoRepository;
 import com.warren.model.repository.TradingEntryRepository;
 import com.warren.strategy.Strategy;
 import com.warren.strategy.model.TradingResult;
+import com.warren.util.DateUtil;
 
 import java.util.Date;
 import java.util.List;
@@ -59,12 +60,13 @@ public class Simulator {
         }
         // for candidate checking, use data no later than yesterday
         // if i<=0; strategy should always return false
-        boolean isCandidate = strategy.checkCandidate(stockDayInfos, index - 1);
+        boolean isCandidate = strategy.checkCandidate(stockDayInfos, index);
+        StockDayInfo yesterdayInfo = stockDayInfos.get(index - 1);
+        StockDayInfo todayInfo = stockDayInfos.get(index);
         if (isCandidate) {
-            StockDayInfo yesterdayInfo = stockDayInfos.get(index - 1);
             TradingEntry tradingEntry = TradingEntry.builder()
-                    .code(yesterdayInfo.getCode())
-                    .date(yesterdayInfo.getDate())
+                    .code(todayInfo.getCode())
+                    .date(DateUtil.format(todayInfo.getDate()))
                     .price(yesterdayInfo.getClose())
                     .strategy(strategy.getClass().getName())
                     .tradingType(TradingType.CANDIDATE)
@@ -72,10 +74,9 @@ public class Simulator {
             tradingEntryRepository.save(tradingEntry);
         } else {
             if (TradingStatus.CANDIDATE.equals(formerStatus)) {
-                StockDayInfo yesterdayInfo = stockDayInfos.get(index - 1);
                 TradingEntry tradingEntry = TradingEntry.builder()
-                        .code(yesterdayInfo.getCode())
-                        .date(yesterdayInfo.getDate())
+                        .code(todayInfo.getCode())
+                        .date(DateUtil.format(todayInfo.getDate()))
                         .price(yesterdayInfo.getClose())
                         .strategy(strategy.getClass().getName())
                         .tradingType(TradingType.DECANDIDATE)
@@ -97,7 +98,7 @@ public class Simulator {
             StockDayInfo todayInfo = stockDayInfos.get(index);
             TradingEntry tradingEntry = TradingEntry.builder()
                     .code(todayInfo.getCode())
-                    .date(tradingResult.getTime())
+                    .date(DateUtil.format(tradingResult.getTime()))
                     .price(tradingResult.getPrice())
                     .strategy(strategy.getClass().getName())
                     .tradingType(TradingType.BUY)
@@ -118,7 +119,7 @@ public class Simulator {
             StockDayInfo todayInfo = stockDayInfos.get(index);
             TradingEntry tradingEntry = TradingEntry.builder()
                     .code(todayInfo.getCode())
-                    .date(tradingResult.getTime())
+                    .date(DateUtil.format(tradingResult.getTime()))
                     .price(tradingResult.getPrice())
                     .boughtPrice(tradingEntries.get(0).getPrice())
                     .strategy(strategy.getClass().getName())

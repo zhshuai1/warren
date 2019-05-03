@@ -14,6 +14,10 @@ public final class DateUtil {
         return formatter.format(date);
     }
 
+    public static String format(Date date) {
+        return formatterFull.format(date);
+    }
+
     public static Date parseFromYearMonthDay(String yearMonthDay) {
         try {
             return formatter.parse(yearMonthDay);

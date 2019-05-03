@@ -14,7 +14,8 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
         List<Strategy> strategies = Arrays.asList(new TestSimpleStrategy());
-        List<String> codes = new StockDayInfoRepository().getAllCodes();
+        //List<String> codes = new StockDayInfoRepository().getAllCodes();
+        List<String>codes=Arrays.asList("sh603666","sh601298","sh603039","sh603737","sh603986","sh600776");
         System.out.println(codes);
         System.out.println(codes.size());
         Date start = new Date(119, 0, 1);

@@ -18,7 +18,7 @@ public class TradingEntry {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String code;
-    private Date date;
+    private String date;
     private double price;
     // only valid when SELL
     private double boughtPrice;
