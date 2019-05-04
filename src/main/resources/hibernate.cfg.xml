@@ -9,7 +9,7 @@
         <property name="hibernate.connection.username">zhangsh</property>
         <property name="hibernate.connection.password">000000</property>
         <property name="hibernate.connection.url">jdbc:mysql://192.168.1.184:3306/stock</property>
-        <property name="show_sql">true</property>
+        <property name="show_sql">false</property>
         <property name="format_sql">true</property>
         <property name="connection.pool_size">100</property>
 

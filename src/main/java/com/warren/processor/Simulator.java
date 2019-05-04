@@ -29,11 +29,15 @@ public class Simulator {
                 }
             }
             for (Strategy strategy : strategies) {
+                long startTime = System.currentTimeMillis();
+                System.out.println(String.format("Checking for %s, %d records, strategy: %s",
+                        code, stockDayInfos.size(), strategy.getClass().getName()));
                 for (int i = startIndex; i < endIndex; ++i) {
                     checkCandidate(stockDayInfos, i, strategy);
                     checkBuy(stockDayInfos, i, strategy);
                     checkSell(stockDayInfos, i, strategy);
                 }
+                System.out.println("Time cost: " + (System.currentTimeMillis() - startTime));
             }
         }
     }
@@ -52,80 +56,92 @@ public class Simulator {
     }
 
     private static void checkCandidate(List<StockDayInfo> stockDayInfos, int index, Strategy strategy) {
-        String code = stockDayInfos.get(0).getCode();
-        List<TradingEntry> tradingEntries = tradingEntryRepository.getTradingEntryByCodeAndStrategyOrderByDateDesc(code, strategy.getClass());
-        TradingStatus formerStatus = getFormerStatus(tradingEntries);
-        if (TradingStatus.BOUGHT.equals(formerStatus) || index <= 0) {
-            return;
-        }
-        // for candidate checking, use data no later than yesterday
-        // if i<=0; strategy should always return false
-        boolean isCandidate = strategy.checkCandidate(stockDayInfos, index);
-        StockDayInfo yesterdayInfo = stockDayInfos.get(index - 1);
-        StockDayInfo todayInfo = stockDayInfos.get(index);
-        if (isCandidate) {
-            TradingEntry tradingEntry = TradingEntry.builder()
-                    .code(todayInfo.getCode())
-                    .date(DateUtil.format(todayInfo.getDate()))
-                    .price(yesterdayInfo.getClose())
-                    .strategy(strategy.getClass().getName())
-                    .tradingType(TradingType.CANDIDATE)
-                    .build();
-            tradingEntryRepository.save(tradingEntry);
-        } else {
-            if (TradingStatus.CANDIDATE.equals(formerStatus)) {
+        try {
+            String code = stockDayInfos.get(0).getCode();
+            List<TradingEntry> tradingEntries = tradingEntryRepository.getTradingEntryByCodeAndStrategyOrderByDateDesc(code, strategy.getClass());
+            TradingStatus formerStatus = getFormerStatus(tradingEntries);
+            if (TradingStatus.BOUGHT.equals(formerStatus) || index <= 0) {
+                return;
+            }
+            // for candidate checking, use data no later than yesterday
+            // if i<=0; strategy should always return false
+            boolean isCandidate = strategy.checkCandidate(stockDayInfos, index);
+            StockDayInfo yesterdayInfo = stockDayInfos.get(index - 1);
+            StockDayInfo todayInfo = stockDayInfos.get(index);
+            if (isCandidate) {
                 TradingEntry tradingEntry = TradingEntry.builder()
                         .code(todayInfo.getCode())
                         .date(DateUtil.format(todayInfo.getDate()))
                         .price(yesterdayInfo.getClose())
                         .strategy(strategy.getClass().getName())
-                        .tradingType(TradingType.DECANDIDATE)
+                        .tradingType(TradingType.CANDIDATE)
                         .build();
                 tradingEntryRepository.save(tradingEntry);
+            } else {
+                if (TradingStatus.CANDIDATE.equals(formerStatus)) {
+                    TradingEntry tradingEntry = TradingEntry.builder()
+                            .code(todayInfo.getCode())
+                            .date(DateUtil.format(todayInfo.getDate()))
+                            .price(yesterdayInfo.getClose())
+                            .strategy(strategy.getClass().getName())
+                            .tradingType(TradingType.DECANDIDATE)
+                            .build();
+                    tradingEntryRepository.save(tradingEntry);
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     private static void checkBuy(List<StockDayInfo> stockDayInfos, int index, Strategy strategy) {
-        String code = stockDayInfos.get(0).getCode();
-        List<TradingEntry> tradingEntries = tradingEntryRepository.getTradingEntryByCodeAndStrategyOrderByDateDesc(code, strategy.getClass());
-        TradingStatus formerStatus = getFormerStatus(tradingEntries);
-        if (!TradingStatus.CANDIDATE.equals(formerStatus)) {
-            return;
-        }
-        TradingResult tradingResult = strategy.checkBuy(stockDayInfos, index, tradingEntries.get(0));
-        if (tradingResult.isSuccess()) {
-            StockDayInfo todayInfo = stockDayInfos.get(index);
-            TradingEntry tradingEntry = TradingEntry.builder()
-                    .code(todayInfo.getCode())
-                    .date(DateUtil.format(tradingResult.getTime()))
-                    .price(tradingResult.getPrice())
-                    .strategy(strategy.getClass().getName())
-                    .tradingType(TradingType.BUY)
-                    .build();
-            tradingEntryRepository.save(tradingEntry);
+        try {
+            String code = stockDayInfos.get(0).getCode();
+            List<TradingEntry> tradingEntries = tradingEntryRepository.getTradingEntryByCodeAndStrategyOrderByDateDesc(code, strategy.getClass());
+            TradingStatus formerStatus = getFormerStatus(tradingEntries);
+            if (!TradingStatus.CANDIDATE.equals(formerStatus)) {
+                return;
+            }
+            TradingResult tradingResult = strategy.checkBuy(stockDayInfos, index, tradingEntries.get(0));
+            if (tradingResult.isSuccess()) {
+                StockDayInfo todayInfo = stockDayInfos.get(index);
+                TradingEntry tradingEntry = TradingEntry.builder()
+                        .code(todayInfo.getCode())
+                        .date(DateUtil.format(tradingResult.getTime()))
+                        .price(tradingResult.getPrice())
+                        .strategy(strategy.getClass().getName())
+                        .tradingType(TradingType.BUY)
+                        .build();
+                tradingEntryRepository.save(tradingEntry);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     private static void checkSell(List<StockDayInfo> stockDayInfos, int index, Strategy strategy) {
-        String code = stockDayInfos.get(0).getCode();
-        List<TradingEntry> tradingEntries = tradingEntryRepository.getTradingEntryByCodeAndStrategyOrderByDateDesc(code, strategy.getClass());
-        TradingStatus formerStatus = getFormerStatus(tradingEntries);
-        if (!TradingStatus.BOUGHT.equals(formerStatus)) {
-            return;
-        }
-        TradingResult tradingResult = strategy.checkSell(stockDayInfos, index, tradingEntries.get(0));
-        if (tradingResult.isSuccess()) {
-            StockDayInfo todayInfo = stockDayInfos.get(index);
-            TradingEntry tradingEntry = TradingEntry.builder()
-                    .code(todayInfo.getCode())
-                    .date(DateUtil.format(tradingResult.getTime()))
-                    .price(tradingResult.getPrice())
-                    .boughtPrice(tradingEntries.get(0).getPrice())
-                    .strategy(strategy.getClass().getName())
-                    .tradingType(TradingType.SELL)
-                    .build();
-            tradingEntryRepository.save(tradingEntry);
+        try {
+            String code = stockDayInfos.get(0).getCode();
+            List<TradingEntry> tradingEntries = tradingEntryRepository.getTradingEntryByCodeAndStrategyOrderByDateDesc(code, strategy.getClass());
+            TradingStatus formerStatus = getFormerStatus(tradingEntries);
+            if (!TradingStatus.BOUGHT.equals(formerStatus)) {
+                return;
+            }
+            TradingResult tradingResult = strategy.checkSell(stockDayInfos, index, tradingEntries.get(0));
+            if (tradingResult.isSuccess()) {
+                StockDayInfo todayInfo = stockDayInfos.get(index);
+                TradingEntry tradingEntry = TradingEntry.builder()
+                        .code(todayInfo.getCode())
+                        .date(DateUtil.format(tradingResult.getTime()))
+                        .price(tradingResult.getPrice())
+                        .boughtPrice(tradingEntries.get(0).getPrice())
+                        .strategy(strategy.getClass().getName())
+                        .tradingType(TradingType.SELL)
+                        .build();
+                tradingEntryRepository.save(tradingEntry);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
