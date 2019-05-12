@@ -44,8 +44,8 @@ public class GainLossDaysSellStrategy implements SellStrategy {
 
         for (int i = 0; i < minuteDataEntries.size(); ++i) {
             double currentPrice = minuteDataEntries.get(i).getPrice();
-            StockDayInfo lastStockDayInfo = stockDayInfos.get(index - 1);
-            double currentAuthority = lastStockDayInfo.getAuthority() * currentPrice / minuteDataEntries.get(0).getPrevclose();
+            StockDayInfo todayStockInfo = stockDayInfos.get(index);
+            double currentAuthority = todayStockInfo.getAuthority() * currentPrice / todayStockInfo.getClose();
 
             // currentPrice!=0 is to filter out the bad data
             // to ignore some of the check points, only need to set them proper:

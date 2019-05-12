@@ -40,9 +40,9 @@ public class ModerateOpenBuyStrategy implements BuyStrategy {
         for (int i = 0; i < checkedMinutes; ++i) {
             double delta = minuteDataEntries.get(i).getPrice() / preClose - 1;
             if (delta > lowerBound && delta < upperBound) {
-                StockDayInfo lastStockDayInfo = stockDayInfos.get(index - 1);
+                StockDayInfo todayStockInfo = stockDayInfos.get(index);
                 double currentPrice = minuteDataEntries.get(i).getPrice();
-                double currentAuthority = lastStockDayInfo.getAuthority() * currentPrice / open.getPrevclose();
+                double currentAuthority = todayStockInfo.getAuthority() * currentPrice / todayStockInfo.getClose();
                 return TradingResult.builder().price(currentPrice)
                         .authority(currentAuthority)
                         .success(true)
