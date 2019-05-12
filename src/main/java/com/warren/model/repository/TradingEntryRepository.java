@@ -42,4 +42,15 @@ public class TradingEntryRepository {
         transaction.commit();
         return entries;
     }
+    public List<TradingEntry> getLastTradingEntryByCodeAndStrategy(String code, Class<?> clazz) {
+        Session session = sessionFactory.getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+        String hql = "FROM TradingEntry AS rec WHERE rec.code = :code AND rec.strategy = :strategy ORDER BY date DESC LIMIT 1";
+        Query<TradingEntry> query = session.createQuery(hql,TradingEntry.class);
+        query.setParameter("code", code);
+        query.setParameter("strategy", clazz.getName());
+        List<TradingEntry> entries = query.list();
+        transaction.commit();
+        return entries;
+    }
 }

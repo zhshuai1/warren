@@ -38,28 +38,31 @@ public class GainLossDaysSellStrategy implements SellStrategy {
         }
         List<MinuteDataEntry> minuteDataEntries = StockParser.parse(stockDayInfos.get(index).getMinute());
 
-        double priceWhenBought = lastTradingEntry.getPrice();
+        double authorityWhenBought = lastTradingEntry.getAuthority();
         Date boughtDate = DateUtil.parseFromFull(lastTradingEntry.getDate());
         MinuteDataEntry open = minuteDataEntries.get(0);
-        if (DateUtil.diffDays(currentDate, boughtDate) > maxDays) {
-            return TradingResult.builder().success(true)
-                    .time(StockParser.index2Time(open.getDate(), 0))
-                    .price(open.getPrice()).build();
-        } else {
-            for (int i = 0; i < minuteDataEntries.size(); ++i) {
-                double currentPrice = minuteDataEntries.get(i).getPrice();
-                // currentPrice!=0 is to filter out the bad data
-                // to ignore some of the check points, only need to set them proper:
-                // 1. maxDays -> 10000;
-                // 2. expectedGain -> 100
-                // 3. bearedLoss -> -100
-                if (currentPrice != 0 && currentPrice > priceWhenBought * (1 + expectedGain) || currentPrice < priceWhenBought * (1 + bearedLoss)) {
-                    return TradingResult.builder().success(true)
-                            .time(StockParser.index2Time(open.getDate(), i))
-                            .price(currentPrice).build();
-                }
+
+        for (int i = 0; i < minuteDataEntries.size(); ++i) {
+            double currentPrice = minuteDataEntries.get(i).getPrice();
+            StockDayInfo lastStockDayInfo = stockDayInfos.get(index - 1);
+            double currentAuthority = lastStockDayInfo.getAuthority() * currentPrice / minuteDataEntries.get(0).getPrevclose();
+
+            // currentPrice!=0 is to filter out the bad data
+            // to ignore some of the check points, only need to set them proper:
+            // 1. maxDays -> 10000;
+            // 2. expectedGain -> 100
+            // 3. bearedLoss -> -100
+            if (currentPrice != 0
+                    && (currentAuthority > authorityWhenBought * (1 + expectedGain)
+                    || currentAuthority < authorityWhenBought * (1 + bearedLoss)
+                    || DateUtil.diffDays(currentDate, boughtDate) > maxDays)) {
+                return TradingResult.builder().success(true)
+                        .time(StockParser.index2Time(open.getDate(), i))
+                        .price(currentPrice)
+                        .authority(currentAuthority).build();
             }
         }
+
         return TradingResult.builder().success(false).build();
     }
 

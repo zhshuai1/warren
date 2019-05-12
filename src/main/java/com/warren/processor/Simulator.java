@@ -4,8 +4,8 @@ import com.warren.model.StockDayInfo;
 import com.warren.model.TradingEntry;
 import com.warren.model.TradingEntry.TradingStatus;
 import com.warren.model.TradingEntry.TradingType;
+import com.warren.model.repository.CachedTradingEntryRepository;
 import com.warren.model.repository.StockDayInfoRepository;
-import com.warren.model.repository.TradingEntryRepository;
 import com.warren.strategy.Strategy;
 import com.warren.strategy.model.TradingResult;
 import com.warren.util.DateUtil;
@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 public class Simulator {
-    private static final TradingEntryRepository tradingEntryRepository = new TradingEntryRepository();
+    private static final CachedTradingEntryRepository tradingEntryRepository = new CachedTradingEntryRepository();
 
     public static void simulate(List<String> codes, List<Strategy> strategies, Date start, Date end) {
         for (String code : codes) {
@@ -109,6 +109,7 @@ public class Simulator {
                         .code(todayInfo.getCode())
                         .date(DateUtil.format(tradingResult.getTime()))
                         .price(tradingResult.getPrice())
+                        .authority(tradingResult.getAuthority())
                         .strategy(strategy.getClass().getName())
                         .tradingType(TradingType.BUY)
                         .build();
@@ -135,6 +136,8 @@ public class Simulator {
                         .date(DateUtil.format(tradingResult.getTime()))
                         .price(tradingResult.getPrice())
                         .boughtPrice(tradingEntries.get(0).getPrice())
+                        .authority(tradingResult.getAuthority())
+                        .boughtAuthority(tradingEntries.get(0).getAuthority())
                         .strategy(strategy.getClass().getName())
                         .tradingType(TradingType.SELL)
                         .build();

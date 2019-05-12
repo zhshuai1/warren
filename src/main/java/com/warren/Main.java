@@ -17,7 +17,7 @@ public class Main {
         List<Strategy> strategies = Arrays.asList(new ContinuousGrowingStrategy(),new TestSimpleStrategy());
         List<String> codes = new StockDayInfoRepository().getAllCodes();
         //List<String>codes=Arrays.asList("sh603666","sh601298","sh603039","sh603737","sh603986","sh600776");
-        //List<String>codes=Arrays.asList("sz300015");
+        //List<String>codes=Arrays.asList("sh600419");
         System.out.println(codes);
         System.out.println(codes.size());
         Date start = new Date(118, 0, 1);

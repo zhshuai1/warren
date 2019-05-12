@@ -11,5 +11,6 @@ import java.util.Date;
 public class TradingResult {
     private boolean success;
     private double price;
+    private double authority;
     private Date time;
 }
