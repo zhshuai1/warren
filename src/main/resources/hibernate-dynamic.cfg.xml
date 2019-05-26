@@ -30,6 +30,7 @@
         <property name="hibernate.current_session_context_class">thread</property>
 
         <mapping class="com.warren.model.TradingEntry"/>
+        <mapping class="com.warren.model.RunningTradingEntry"/>
 
     </session-factory>
 </hibernate-configuration>

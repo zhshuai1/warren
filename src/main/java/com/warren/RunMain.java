@@ -3,6 +3,7 @@ package com.warren;
 import com.warren.model.repository.DynamicSessionFactoryProvider;
 import com.warren.model.repository.SessionFactoryProvider;
 import com.warren.model.repository.StockDayInfoRepository;
+import com.warren.processor.Runner;
 import com.warren.processor.Simulator;
 import com.warren.strategy.Strategy;
 import com.warren.strategy.continuousgrowing.ContinuousGrowingStrategy;
@@ -12,7 +13,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-public class Main {
+public class RunMain {
     public static void main(String[] args) {
         List<Strategy> strategies = Arrays.asList(new ContinuousGrowingStrategy(),new TestSimpleStrategy());
         List<String> codes = new StockDayInfoRepository().getAllCodes();
@@ -22,7 +23,7 @@ public class Main {
         System.out.println(codes.size());
         Date start = new Date(118, 0, 1);
         Date end = new Date(119, 10, 1);
-        Simulator.simulate(codes, strategies, start, end);
+        Runner.checkCandidate(codes, strategies, start, end);
         SessionFactoryProvider.destroy();
         DynamicSessionFactoryProvider.destroy();
     }
