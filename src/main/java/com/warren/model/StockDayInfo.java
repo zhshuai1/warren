@@ -14,6 +14,7 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity
 @IdClass(StockDayInfo.StockDayInfoKey.class)
 @Table(name="stock")
