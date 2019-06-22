@@ -8,14 +8,13 @@ import com.warren.model.repository.StockDayInfoRepository;
 import com.warren.strategy.Strategy;
 import com.warren.util.DateUtil;
 
-import java.util.Date;
 import java.util.List;
 
 public class Runner {
     private static final RunningTradingEntryRepository tradingEntryRepository = new RunningTradingEntryRepository();
     private static final StockDayInfoRepository stockDayInfoRepository = new StockDayInfoRepository();
 
-    public static void checkCandidate(List<String> codes, List<Strategy> strategies, Date start, Date end) {
+    public static void checkCandidate(List<String> codes, List<Strategy> strategies) {
         for (String code : codes) {
             List<StockDayInfo> stockDayInfos = stockDayInfoRepository.getStockDayInfos(code);
             for (Strategy strategy : strategies) {

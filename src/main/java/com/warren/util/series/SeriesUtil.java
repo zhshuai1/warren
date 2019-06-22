@@ -1,5 +1,6 @@
 package com.warren.util.series;
 
+import com.sun.xml.internal.ws.server.UnsupportedMediaException;
 import com.warren.model.StockDayInfo;
 
 import java.util.ArrayList;
@@ -27,5 +28,11 @@ public class SeriesUtil {
 
     public static double maxRise(List<StockDayInfo> stockDayInfos, int start, int end) {
         return 0;
+    }
+    public static boolean isUpperBoundary(List<StockDayInfo> stockDayInfos, int index){
+        throw new UnsupportedMediaException();
+    }
+    public static boolean isLowerBoundary(List<StockDayInfo> stockDayInfos, int index){
+        throw new UnsupportedMediaException();
     }
 }

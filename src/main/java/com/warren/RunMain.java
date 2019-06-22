@@ -17,13 +17,9 @@ public class RunMain {
     public static void main(String[] args) {
         List<Strategy> strategies = Arrays.asList(new ContinuousGrowingStrategy(),new TestSimpleStrategy());
         List<String> codes = new StockDayInfoRepository().getAllCodes();
-        //List<String>codes=Arrays.asList("sh603666","sh601298","sh603039","sh603737","sh603986","sh600776");
-        //List<String>codes=Arrays.asList("sz002793");
-        System.out.println(codes);
         System.out.println(codes.size());
-        Date start = new Date(118, 0, 1);
-        Date end = new Date(119, 10, 1);
-        Runner.checkCandidate(codes, strategies, start, end);
+        System.out.println(codes);
+        Runner.checkCandidate(codes, strategies);
         SessionFactoryProvider.destroy();
         DynamicSessionFactoryProvider.destroy();
     }
