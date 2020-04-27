@@ -15,7 +15,7 @@ import java.util.List;
 
 public class RunMain {
     public static void main(String[] args) {
-        List<Strategy> strategies = Arrays.asList(new ContinuousGrowingStrategy(),new TestSimpleStrategy());
+        List<Strategy> strategies = Arrays.asList(new ContinuousGrowingStrategy());
         List<String> codes = new StockDayInfoRepository().getAllCodes();
         System.out.println(codes.size());
         System.out.println(codes);
